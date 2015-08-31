@@ -1,0 +1,59 @@
+<html>
+<head>
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script>
+$( document ).ready(function() {
+    $("#table_data").hide();
+    $("#loc_values").change(function () {
+        var end = this.value;
+        datas = {'id':end};
+        $.ajax({
+            url: '/fluctuations/',
+            type: 'GET',
+            data: datas,
+            dataType: 'json',
+            success: function(data) {
+                     $('#table_data tbody').empty();
+                     $('#table_data').show();
+                     for(i=0;i<data.length;i++){
+                         $.each(data[i], function(key, value){
+                            if(value>20){
+                                var fluctuates = value-20;                            
+                            }
+                            else{
+                                fluctuates = 0                            
+                            }
+                            $('#table_data').append('<tr><td>'+end+'</td><td>'+key+'</td><td>'+value+'</td><td>20</td><td>'+fluctuates+'</td></tr>');
+                     });                     
+                     }
+                     
+                     },
+            error: function(data) {
+                     alert('error');
+                   }
+        });
+    });
+});    
+</script>
+</head>
+<body>
+    <h2>Find fluctuations</h2>
+    <select id="loc_values">
+    {% for id in allset %}
+        <option value={{id}}>{{id}}</option>
+    {% endfor %}
+    </select>
+    <table id="table_data" border="2px">
+        <thead>
+        <tr>
+            <td>Location_id</td>
+            <td>Date</td>
+            <td>Count</td>
+            <td>Baseline</td>
+            <td>Fluctuations</td>  
+        </tr>  
+        </thead>                
+    </table>
+    <a href="{% url 'home' %}">Home</a>
+</body>
+</html>
